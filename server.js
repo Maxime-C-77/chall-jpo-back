@@ -1,23 +1,13 @@
 const express = require('express')
+const cors = require('cors');
 const app = express()
 const lespokemon = require('./pokemons.json')
 const InformationsPokemon = require('./infospokemons.json')
 var bodyParser = require('body-parser')
 app.use(bodyParser.json());
+app.use(cors());
 
 const DEFAULT_LIMIT = 10;
-
-app.get('/api/pokemon/:id', (req,res) => {
-  const id = parseInt(req.params.id)
-  const lePokemon = pokemon.find(jeu => jeu.id === id)
-  res.status(200).json(lePokemon)
-})
-
-app.get('/api/pokemon/:nom', (req,res) => {
-  const nom = req.params.nom
-  const lePokemon = pokemon.find(jeu => jeu.name === nom)
-  res.status(200).json(lePokemon)
-})
 
 
 app.get('/api/pokemon', (req, res) => {
@@ -25,8 +15,8 @@ app.get('/api/pokemon', (req, res) => {
   const limit = req.query.limit ? parseInt(req.query.limit) : DEFAULT_LIMIT;
   const startIndex = offset;
   const endIndex = startIndex + limit;
-  const totalPokemon = pokemon.length;
-  const paginatedPokemon = pokemon.slice(startIndex, endIndex);
+  const totalPokemon = lespokemon.length;
+  const paginatedPokemon = lespokemon.slice(startIndex, endIndex);
   const nextOffset = startIndex + limit;
   const previousOffset = Math.max(0, startIndex - limit);
   const nextLink = `/api/pokemon/${nextOffset}/${limit}`;
@@ -49,7 +39,7 @@ app.get('/api/pokemon/:offset/:limit', (req, res) => {
   const previousOffset = Math.max(0, offset - limit);
   const nextLink = `/api/pokemon/${nextOffset}/${limit}`;
   const previousLink = `/api/pokemon/${previousOffset}/${limit}`;
-  const paginatedPokemon = pokemon.slice(offset, offset + limit);
+  const paginatedPokemon = lespokemon.slice(offset, offset + limit);
 
   res.status(200).json({
     offset,
@@ -61,16 +51,11 @@ app.get('/api/pokemon/:offset/:limit', (req, res) => {
 });
 
 app.get('/api/infoPokemon/:id', (req, res) => {
-  const id = req.params.id
-
+  const id = parseInt(req.params.id)
+  const lePokemon = InformationsPokemon.find(jeu => jeu.id === id)
+  res.status(200).json(lePokemon)
 });
 
-
-app.get('/nombrePoke', (req,res)=>{
-  res.status(200).json(pokemon.length)
-
-})
-
-app.listen(8080, () => {
+app.listen(8000, () => {
   console.log('Server started on port 8000');
 })
